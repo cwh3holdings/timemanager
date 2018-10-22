@@ -9,18 +9,7 @@ export default class SettingsScreen extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      taskList: {},
-    }
-
-    this._loadTaskList();
   }
-
-
-  _loadTaskList = async() => {
-
-  };
 
 
 

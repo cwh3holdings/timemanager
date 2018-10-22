@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "timemanager",
-    "description": "A very interesting project.",
+    "name": "Time Manager",
+    "description": "Get to school on time!",
     "slug": "timemanager",
     "privacy": "public",
     "sdkVersion": "30.0.0",
