@@ -4,8 +4,25 @@ import {ScrollView, StyleSheet, Text, View} from "react-native";
 
 export default class SettingsScreen extends React.Component {
   static navigationOptions = {
-    title: 'About'
+    title: 'About',
   };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      taskList: {},
+    }
+
+    this._loadTaskList();
+  }
+
+
+  _loadTaskList = async() => {
+
+  };
+
+
 
   render() {
     return (
