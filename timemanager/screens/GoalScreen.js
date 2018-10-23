@@ -1,10 +1,14 @@
 import React from 'react';
 import {
+  AsyncStorage,
+  FlatList,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import AddHeaderIcon from "../components/AddHeaderIcon";
+import AddTaskModal from "./AddTaskModal";
+import TaskListItem from "../components/TaskListItem";
 
 export default class GoalScreen extends React.Component {
 
@@ -25,16 +29,32 @@ export default class GoalScreen extends React.Component {
     super(props);
     this.state = {
       goalList: null,
+      addTaskItemModalShowing: false,
+      goal: this.props.navigation.getParam('goal'),
     }
   }
 
-
   componentDidMount() {
+    this.props.navigation.setParams({ addTaskItem: this._openAddTaskModal });
   }
 
-  _clearAllItems = async() => {
-    //await AsyncStorage.removeItem('goalList');
-  }
+  _openAddTaskModal = () => {
+    this.setState({
+      addTaskItemModalShowing: true,
+    });
+  };
+
+  _closeAddTaskModal = () => {
+    this.setState({
+      addTaskItemModalShowing: false,
+    });
+
+    AsyncStorage.getItem(this.state.goal.key).then( item => {
+      this.setState({
+        goal: item
+      });
+    });
+  };
 
 
   _itemSelected(item) {
@@ -52,13 +72,27 @@ export default class GoalScreen extends React.Component {
 
 
   render() {
-    const goal = this.props.navigation.getParam('goal');
+    const goal = this.state.goal;
 
 
     return (
+      <React.Fragment>
+
       <View style={styles.container}>
         <Text>Goal Screen: {goal.title} </Text>
+        <FlatList
+          data={goal.tasks}
+          renderItem={({item}) => <TaskListItem task={item} onPressItem={ this._itemSelected } />}
+          ListHeaderComponent={this._renderHeader}
+        />
       </View>
+
+        <AddTaskModal
+          visible={this.state.addTaskItemModalShowing}
+          goal={goal}
+          closeModal={this._closeAddTaskModal}
+        />
+      </React.Fragment>
     );
   }
 }

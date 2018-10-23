@@ -19,7 +19,6 @@ export default class AddGoalModal extends React.Component {
 
     this.state = {
       goalTitle: '',
-      goalList: (this.props.goalList) ? this.props.goalList : [],
     }
 
   }
@@ -36,7 +35,7 @@ export default class AddGoalModal extends React.Component {
 
   _createKey() {
     const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    var key = "";
+    var key = "goal_";
     for (var i = 0; i < 32; i++)
       key += possible.charAt(Math.floor(Math.random() * possible.length));
     console.log("key: " + key);
@@ -47,11 +46,7 @@ export default class AddGoalModal extends React.Component {
   _handleSave = async () => {
     console.log("_handleSave");
 
-    var goalList = (this.props.goalList) ? this.props.goalList.slice() : [];
-
-
-
-    goalList.push(
+    var newGoal = (
       {
         key: this._createKey(),
         title: this.state.goalTitle,
@@ -59,7 +54,7 @@ export default class AddGoalModal extends React.Component {
       }
     );
 
-    await AsyncStorage.setItem('goalList', JSON.stringify(goalList));
+    await AsyncStorage.setItem(newGoal.key, JSON.stringify(newGoal));
 
 
     this.state = {
@@ -70,11 +65,9 @@ export default class AddGoalModal extends React.Component {
   };
 
   render() {
-    console.log("AddGoalModal.render: " + JSON.stringify(this.props.goalList));
     return (
       <Modal
         animationType="slide"
-        //presentationStyle="fullScreen"
         transparent={true}
         visible={this.props.visible}
         onRequestClose={() => console.log("onRequestClose")}

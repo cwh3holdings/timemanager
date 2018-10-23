@@ -35,7 +35,7 @@ export default class HomeScreen extends React.Component {
     }
 
     // for testing
-   // this._clearAllItems();
+    //this._clearAllItems();
 
     this._itemSelected = this._itemSelected.bind(this);
     this._loadGoalList = this._loadGoalList.bind(this);
@@ -48,16 +48,43 @@ export default class HomeScreen extends React.Component {
   }
 
   _clearAllItems = async() => {
-    await AsyncStorage.removeItem('goalList');
+    AsyncStorage.getAllKeys((err, keys) => {
+      AsyncStorage.multiGet(keys, (err, stores) => {
+        stores.map((result, i, store) => {
+          // get at each store's key/value so you can work with it
+          let key = store[i][0];
+          let value = store[i][1];
+          console.log("key: " + key);
+          console.log("value: " + value);
+
+          if (key.startsWith('goal_')) {
+            AsyncStorage.removeItem(key);
+          }
+        }, this);
+      });
+    });
   }
 
-  _loadGoalList = async() => {
+  _loadGoalList = () => {
 
-    console.log("getting goalList");
-    var goalList =  await AsyncStorage.getItem('goalList');
-    console.log(goalList);
-    goalList =  JSON.parse(goalList);
-    await this.setState({goalList: goalList});
+    var goalList = [];
+
+    AsyncStorage.getAllKeys((err, keys) => {
+      AsyncStorage.multiGet(keys, (err, stores) => {
+        stores.map((result, i, store) => {
+          // get at each store's key/value so you can work with it
+          let key = store[i][0];
+          let value = store[i][1];
+          console.log("key: " + key);
+          console.log("value: " + value);
+
+          if (key.startsWith('goal_')) {
+            goalList.push(JSON.parse(value));
+            this.setState({goalList: goalList});
+          }
+        }, this);
+      });
+    });
   };
 
 
@@ -69,11 +96,10 @@ export default class HomeScreen extends React.Component {
   };
 
   _closeAddGoalItemModal = () => {
-    this._loadGoalList().then( () =>
-      this.setState({
-        addGoalItemModalShowing: false,
-      })
-    ).catch(error => console.log(error));
+    this._loadGoalList();
+    this.setState({
+      addGoalItemModalShowing: false,
+    });
   };
 
   _itemSelected(item) {
@@ -100,13 +126,13 @@ export default class HomeScreen extends React.Component {
       <View style={styles.container}>
         {
           (this.state.goalList) ?
-            <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+            <View style={styles.container} contentContainerStyle={styles.contentContainer}>
               <FlatList
                 data={this.state.goalList}
                 renderItem={({item}) => <GoalListItem item={item} onPressItem={ this._itemSelected } />}
                 ListHeaderComponent={this._renderHeader}
               />
-            </ScrollView>
+            </View>
             :
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
               <Text>No items yet</Text>
@@ -115,7 +141,6 @@ export default class HomeScreen extends React.Component {
         <AddGoalModal
           visible={this.state.addGoalItemModalShowing}
           closeModal={this._closeAddGoalItemModal}
-          goalList={this.state.goalList}
         />
 
       </View>
@@ -129,7 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 10,
   },
   listHeader: {
     alignItems: 'center',
