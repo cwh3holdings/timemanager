@@ -6,6 +6,7 @@ import {
   View
 } from 'react-native';
 import { Icon } from 'expo';
+import Colors from "../constants/Colors";
 
 
   export default class GoalListItem extends React.PureComponent {
@@ -32,7 +33,7 @@ import { Icon } from 'expo';
                 name='chevron-right'
                 size={36}
                 //style={{ marginBottom: -3 }}
-                //color={this.props.focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+               // color={Colors.tabIconSelected}
               />
             </View>
           </View>

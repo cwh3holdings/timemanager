@@ -32,13 +32,14 @@ export default class HomeScreen extends React.Component {
     this.state = {
       addGoalItemModalShowing: false,
       goalList: null,
-    }
+    };
 
     // for testing
     //this._clearAllItems();
 
     this._itemSelected = this._itemSelected.bind(this);
     this._loadGoalList = this._loadGoalList.bind(this);
+
     this._loadGoalList();
   }
 
@@ -61,9 +62,12 @@ export default class HomeScreen extends React.Component {
             AsyncStorage.removeItem(key);
           }
         }, this);
+        this.setState({
+          goalList: null
+        });
       });
     });
-  }
+  };
 
   _loadGoalList = () => {
 
@@ -96,9 +100,11 @@ export default class HomeScreen extends React.Component {
   };
 
   _closeAddGoalItemModal = () => {
-    this._loadGoalList();
     this.setState({
+      goalList: null,
       addGoalItemModalShowing: false,
+    } , () => {
+      this._loadGoalList();
     });
   };
 

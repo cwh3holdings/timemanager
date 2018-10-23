@@ -46,20 +46,24 @@ export default class AddGoalModal extends React.Component {
   _handleSave = async () => {
     console.log("_handleSave");
 
+    //TODO: show error
+    if (this.state.goalTitle.trim() == '') {
+      return;
+    }
+
     var newGoal = (
       {
         key: this._createKey(),
-        title: this.state.goalTitle,
+        title: this.state.goalTitle.trim(),
         tasks: [],
       }
     );
 
     await AsyncStorage.setItem(newGoal.key, JSON.stringify(newGoal));
 
-
-    this.state = {
+    this.setState({
       goalTitle: '',
-    };
+    });
 
     this._handleClose();
   };

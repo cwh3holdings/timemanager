@@ -6,6 +6,7 @@ import {
   View
 } from 'react-native';
 import { Icon } from 'expo';
+import Colors from "../constants/Colors";
 
 
   export default class TaskListItem extends React.PureComponent {
@@ -21,18 +22,22 @@ import { Icon } from 'expo';
           onPress={() => this._onPress() }
           underlayColor='#ddd'
         >
-          <View
-            style={styles.itemView}
-          >
+          <View style={styles.itemView} >
+              <Icon.MaterialIcons
+                name='reorder'
+                size={24}
+                //style={{ marginBottom: -3 }}
+                //color={Colors.tabIconSelected}
+              />
             <View>
               <Text style={styles.nameText}>{this.props.task.title}</Text>
             </View>
             <View style={styles.caret}>
               <Icon.MaterialIcons
-                name='chevron-right'
+                name='check-box-outline-blank'
                 size={36}
                 //style={{ marginBottom: -3 }}
-                //color={this.props.focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+                color={Colors.tabIconSelected}
               />
             </View>
           </View>
@@ -67,7 +72,7 @@ const styles = StyleSheet.create({
   caret: {
     justifyContent: 'flex-end',
     position:'absolute',
-    right:0,
+    right:10,
     alignSelf: 'center'
   },
   exhibitImage: {
