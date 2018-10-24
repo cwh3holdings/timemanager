@@ -32,6 +32,8 @@ export default class HomeScreen extends React.Component {
     this.state = {
       addGoalItemModalShowing: false,
       goalList: null,
+      keyIndex: 0,
+      activeRow: null,
     };
 
     // for testing
@@ -63,18 +65,21 @@ export default class HomeScreen extends React.Component {
           }
         }, this);
         this.setState({
-          goalList: null
+          goalList: null,
+          keyIndex: 0,
         });
       });
     });
   };
 
   _loadGoalList = () => {
+    console.log("_loadGoalList entyer");
 
     var goalList = [];
 
     AsyncStorage.getAllKeys((err, keys) => {
       AsyncStorage.multiGet(keys, (err, stores) => {
+        var keyIndex = 0;
         stores.map((result, i, store) => {
           // get at each store's key/value so you can work with it
           let key = store[i][0];
@@ -83,10 +88,23 @@ export default class HomeScreen extends React.Component {
           console.log("value: " + value);
 
           if (key.startsWith('goal_')) {
+            var idx = JSON.parse(value).index;
+            console.log("idx: " + idx);
+            if (idx > keyIndex) {
+              keyIndex = idx;
+            }
             goalList.push(JSON.parse(value));
-            this.setState({goalList: goalList});
           }
         }, this);
+        goalList.sort(function(a, b){
+          let idxA = parseInt(a.index);
+          let idxB = parseInt(b.index);
+          return idxA - idxB;
+        });
+        this.setState({
+          goalList: goalList,
+          keyIndex: keyIndex,
+        });
       });
     });
   };
@@ -124,6 +142,16 @@ export default class HomeScreen extends React.Component {
   }
 
 
+  onSwipeOpen(item, rowId, direction) {
+    this.setState({ activeRow: item.key });
+  }
+
+  onSwipeClose(item, rowId, direction) {
+    if (item.key === this.state.activeRow && typeof direction !== 'undefined') {
+      this.setState({ activeRow: null });
+    }
+  }
+
   render() {
     console.log("HomeScreen.render: " + JSON.stringify(this.state.goalList));
 
@@ -137,6 +165,7 @@ export default class HomeScreen extends React.Component {
                 data={this.state.goalList}
                 renderItem={({item}) => <GoalListItem item={item} onPressItem={ this._itemSelected } />}
                 ListHeaderComponent={this._renderHeader}
+                extraData={this.state.activeRow}
               />
             </View>
             :
@@ -147,6 +176,7 @@ export default class HomeScreen extends React.Component {
         <AddGoalModal
           visible={this.state.addGoalItemModalShowing}
           closeModal={this._closeAddGoalItemModal}
+          keyIndex={this.state.keyIndex}
         />
 
       </View>

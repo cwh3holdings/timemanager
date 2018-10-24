@@ -34,13 +34,16 @@ export default class AddTaskModal extends React.Component {
   _handleSave = async () => {
     console.log("_handleSave")
 
+    var nextIndex = this.props.goal.tasks.length;
+    console.log("nextIndex: " + nextIndex);
     if (this.state.taskTitle.trim() !== '') {
 
       var task = {
         key: this._createKey(),
+        index: nextIndex,
         title: this.state.taskTitle.trim(),
         minutes: 1
-      }
+      };
 
       var goal = this.props.goal;
       goal.tasks.push(task)

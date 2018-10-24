@@ -31,6 +31,7 @@ export default class GoalScreen extends React.Component {
       taskList: this.props.navigation.getParam('goal').tasks,
       addTaskItemModalShowing: false,
       goal: this.props.navigation.getParam('goal'),
+      keyIndex: 0
     }
   }
 
@@ -47,14 +48,16 @@ export default class GoalScreen extends React.Component {
   _closeAddTaskModal = () => {
 
     AsyncStorage.getItem(this.state.goal.key).then( item => {
+      console.log("got item: " + item);
+      var itemObj = JSON.parse(item);
       this.setState({
-        goal: item,
-        taskList: item.tasks,
+        goal: itemObj,
+        taskList: itemObj.tasks,
         addTaskItemModalShowing: false,
       });
     });
   };
-  
+
 
   _itemSelected(item) {
     console.log("select: " + item.title)
@@ -72,15 +75,14 @@ export default class GoalScreen extends React.Component {
 
   render() {
     const goal = this.state.goal;
-
+    const taskList = this.state.goal.tasks;
 
     return (
       <React.Fragment>
 
       <View style={styles.container}>
-        <Text>Goal Screen: {goal.title} </Text>
         <FlatList
-          data={this.state.taskList}
+          data={taskList}
           renderItem={({item}) => <TaskListItem task={item} onPressItem={ this._itemSelected } />}
           ListHeaderComponent={this._renderHeader}
         />

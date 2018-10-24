@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import {MonoText} from "../components/StyledText";
+import PropTypes from 'prop-types';
 
 
 export default class AddGoalModal extends React.Component {
@@ -54,6 +55,7 @@ export default class AddGoalModal extends React.Component {
     var newGoal = (
       {
         key: this._createKey(),
+        index: (this.props.keyIndex + 1),
         title: this.state.goalTitle.trim(),
         tasks: [],
       }
@@ -109,6 +111,12 @@ export default class AddGoalModal extends React.Component {
     );
   }
 }
+
+AddGoalModal.propTypes = {
+  keyIndex: PropTypes.number.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  visible: PropTypes.bool.isRequired
+};
 
 const styles = StyleSheet.create({
   container: {
